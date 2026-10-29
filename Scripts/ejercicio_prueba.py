@@ -30,7 +30,7 @@ def validate_excel(excel_path):
         print("✅ Validación de columnas en Excel: EXITOSA")
         return True
     except Exception as e:
-        print(f"❌ Error al leer el archivo : {e}")
+        print(f"❌ Error al leer el archivo Excel: {e}")
         return False
 
 

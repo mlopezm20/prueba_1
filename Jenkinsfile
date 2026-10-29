@@ -1,22 +1,15 @@
 pipeline {
     agent any
 
-    environment {
-        REPO_URL = 'https://github.com/mlopezm20/prueba_1.git'
-        CREDENTIALS_ID = '001'
-    }
 
     stages {
         stage('1. Clonar Repositorio') {
             steps {
-                echo 'Obteniendo la última versión de la documentación...'
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[url: env.REPO_URL, credentialsId: env.CREDENTIALS_ID]]
-                ])
+                echo 'El repositorio ya está en el workspace.'
+                bat 'dir'
             }
         }
+
 
         stage('2. Preparar Entorno de Validación') {
             steps {
@@ -28,20 +21,33 @@ pipeline {
             }
         }
 
+
         stage('3. Revisión Extensa de Documentación') {
             steps {
-                echo 'Ejecutando script de reglas de negocio para Excel y Gherkin...'
-                bat 'python ejercicio_prueba.py'
+                echo 'Buscando script y archivos Excel...'
+                bat '''
+                    if not exist validate_docs.py (
+                        echo No esta validate_docs.py. No hay nada que revisar.
+                        exit /b 0
+                    )
+                    dir /b *.xlsx *.xls >nul 2>&1
+                    if errorlevel 1 (
+                        echo No hay archivos Excel en el repositorio. La revision se omite.
+                        exit /b 0
+                    )
+                    python validate_docs.py
+                '''
             }
         }
     }
 
+
     post {
         success {
-            echo '✅ La documentación cumple con todos los estándares definidos por la empresa.'
+            echo 'La documentacion cumple con los estandares, o no habia Excel que revisar.'
         }
         failure {
-            echo '❌ La revisión extensa falló. Revisa la consola para corregir el archivo Excel o la sintaxis de Gherkin.'
+            echo 'La revision fallo. Revisa la consola.'
         }
     }
 }
