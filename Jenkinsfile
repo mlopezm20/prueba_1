@@ -21,9 +21,9 @@ pipeline {
         stage('2. Preparar Entorno de Validación') {
             steps {
                 echo 'Instalando dependencias de Python (openpyxl)...'
-                sh '''
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install openpyxl
+                bat '''
+                    python -m pip install --upgrade pip
+                    python -m pip install openpyxl
                 '''
             }
         }
@@ -31,7 +31,7 @@ pipeline {
         stage('3. Revisión Extensa de Documentación') {
             steps {
                 echo 'Ejecutando script de reglas de negocio para Excel y Gherkin...'
-                sh 'python ejercicio_prueba.py'
+                bat 'python ejercicio_prueba.py'
             }
         }
     }
